@@ -1,18 +1,12 @@
-"""Here we store schemas modeling how the response of a given request should look like. These schemas are also used
-by FastAPI for swagger docs.
+from typing import Dict, List, Mapping, Any, Optional
 
-We use the term "schema" as it is in accordance with the OpenAPI spec:
-https://swagger.io/docs/specification/v3_0/data-models/data-models/"""
-
-from typing import Dict, Any, Optional, Mapping, List
-
-from pydantic import BaseModel, field_serializer, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_serializer
 from starlette.background import BackgroundTask
 from starlette.responses import JSONResponse
 
+from src.database.model.feature_switch_model import FeatureSwitch
 from src.database.model.hackathon.participant_model import Participant
 from src.database.model.hackathon.team_model import Team
-from src.database.model.feature_switch_model import FeatureSwitch
 
 
 class Response(JSONResponse):
@@ -54,17 +48,17 @@ class FeatureSwitchResponse(BaseModel):
     feature: FeatureSwitch
 
     @field_serializer("feature")
-    def serialize_feature(self, feature: FeatureSwitch) -> Dict[str, Any]:
+    def serialize_feature(self, feature: FeatureSwitch) -> dict[str, Any]:
         return feature.dump_as_json()
 
 
 class AllFeatureSwitchesResponse(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    features: List[FeatureSwitch]
+    features: list[FeatureSwitch]
 
     @field_serializer("features")
-    def serialize_features(self, features: List[FeatureSwitch]) -> List[Dict[str, Any]]:
+    def serialize_features(self, features: list[FeatureSwitch]) -> list[dict[str, Any]]:
         return [feature.dump_as_json() for feature in features]
 
 
@@ -146,3 +140,15 @@ class RegistrationClosedSuccessfullyResponse(FeatureSwitchResponse):
     """
     Response sent when the endpoint for closing the application is triggered.
     """
+
+
+class AdminDepartmentMemberOut(BaseModel):
+    id: str
+    name: str
+    photo_url: str
+    linkedin_url: str
+    departments: List[str]
+
+
+class AdminDepartmentMembersListOut(BaseModel):
+    members: List[AdminDepartmentMemberOut]

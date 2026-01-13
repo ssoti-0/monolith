@@ -1,9 +1,9 @@
 from abc import ABC
-from typing import Any, Dict, Tuple, Type
+from typing import Any
 from starlette import status
 from pymongo.errors import DuplicateKeyError
 
-ERROR_MAPPING: Dict[Type[BaseException], Tuple[str, int]] = {}
+ERROR_MAPPING: dict[type[BaseException], tuple[str, int]] = {}
 """Maps custom errors to their representation (message, status_code), dynamically populated once a subclass of
 CustomError is created (not instantiated)"""
 
@@ -124,4 +124,9 @@ class JwtDecodeError(CustomError):
 
 class FeatureSwitchNotFoundError(CustomError):
     message = "The feature switch was not found."
+    status_code = status.HTTP_404_NOT_FOUND
+
+
+class DepartmentMemberNotFoundError(CustomError):
+    message = "The department member was not found."
     status_code = status.HTTP_404_NOT_FOUND
